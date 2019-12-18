@@ -1,7 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
 
-  validates :name, presence: true
+  has_many :purchases
+
+  validates :name, presence: true, length: { minimum: 3 }
   validates :username, presence: true, uniqueness: true
   validates :cpf, presence: true
   validates :email, presence: true, uniqueness: true
@@ -9,4 +11,9 @@ class User < ApplicationRecord
   validates :password,
             length: { minimum: 6 },
             if: -> { new_record? || !password.nil? }
+
+
+  def raw_cpf
+    self.cpf.gsub('.','').gsub('-','')
+  end
 end

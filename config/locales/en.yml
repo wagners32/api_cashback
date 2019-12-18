@@ -30,4 +30,25 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    attributes:
+      purchase:
+        statuses:
+          in_validation: "Em validação"
+          approved: "Aprovado"
+
+    errors:
+      models:
+        purchase:
+          attributes:
+            code:
+              blank: "deve ser informado"
+            value:
+              blank: "deve ser informado"
+            cpf:
+              blank: "deve ser informado"
+            purchase_date:
+              blank: "deve ser informada"
+              invalid: "inválida"
+      messages:
+        invalid: "inválido"

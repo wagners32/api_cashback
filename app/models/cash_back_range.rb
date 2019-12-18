@@ -1,0 +1,2 @@
+class CashBackRange < ApplicationRecord
+end
