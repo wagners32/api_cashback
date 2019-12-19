@@ -98,7 +98,8 @@ class Purchase < ApplicationRecord
 
     # status aprovado não permite exclusão
     def cannot_delete_approved
-      errors.add(:base, 'Status da compra não permite exclusão') if self.status != 0
+      puts "status da compra #{self.status}"
+      errors.add(:base, 'Status da compra não permite exclusão') if self.status != 'in_validation'
     end
 
     # valida se o CPF da compra é o mesmo do usuário
