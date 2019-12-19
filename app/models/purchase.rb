@@ -9,16 +9,16 @@ class Purchase < ApplicationRecord
   enum status: [ :in_validation, :approved ]
 
   # validações e campos obrigatórios
-  before_validation :set_value, on: [:create]
+  before_validation :set_value, on: [:create, :update]
   before_validation :set_status, on: [:create, :update]
   before_save :calc_cashback, on: [:create, :update]
 
   validates :cpf, presence: true
+  validates :purchase_date, presence: true
   validates :code, presence: true
   validates :value, presence: true, numericality: { greater_than: 0, less_than: 1000000 }
-  validates :purchase_date, presence: true
-  validate :allow_update, on: :update
   validate :check_cpf_owner?, on: :create
+  validate :allow_update, on: :update
   
   # valida status antes da exclusão
   before_destroy do
@@ -39,9 +39,9 @@ class Purchase < ApplicationRecord
 
   # valida se status permite alteração da compra
   def allow_update
-    if self.status != 0
-      errors.add(:status, :not_valid, message: "atual da compra não permite alteração")
-    end
+    #if self.status != 0
+    #  errors.add(:status, :not_valid, message: "atual da compra não permite alteração")
+    #end
   end
   
   # CPF somente números
@@ -72,6 +72,7 @@ class Purchase < ApplicationRecord
   # metodo para formatação da consulta de compras
   def as_json options={}
     {
+      id: id,
       codigo: code,
       valor: value_formated, 
       data: purchase_date.strftime("%d/%m/%Y"),
@@ -84,8 +85,13 @@ class Purchase < ApplicationRecord
   # calcula cashback da compra
   def calc_cashback
     @percent = CashBackRange.where('? between min_value and max_value', self.value).first
-    self.cashback_percentual = @percent.percentage
-    self.cashback = ((self.value.to_f/100)*@percent.percentage).round(2)
+    if @percent.nil?
+      errors.add(:base, 'A tabela com as faixas de cashback não foi inicializada')
+      throw(:abort) if errors.present?
+    else
+      self.cashback_percentual = @percent.percentage
+      self.cashback = ((self.value.to_f/100)*@percent.percentage).round(2)
+    end
   end
 
   private

@@ -37,7 +37,7 @@ class PurchasesController < ApplicationController
     @purchase.original_value = purchase_params[:value]
    
     if @purchase.save
-      render json: {message: 'Compra registrada com sucesso'}, status: :created
+      render json: @purchase.as_json, status: :created
     else
       render json: { errors: @purchase.errors.full_messages },
              status: :unprocessable_entity
@@ -48,8 +48,9 @@ class PurchasesController < ApplicationController
   def update
     @purchase.original_value = purchase_params[:value]
    
+    puts "#{purchase_params}"
     if @purchase.update(purchase_params)
-      render json: {message: 'Compra atualizada com sucesso'}
+      render json: @purchase.as_json
     else
       render json: { errors: @purchase.errors.full_messages },
              status: :unprocessable_entity
