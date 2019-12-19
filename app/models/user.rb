@@ -12,7 +12,7 @@ class User < ApplicationRecord
             length: { minimum: 6 },
             if: -> { new_record? || !password.nil? }
 
-
+  # CPF somente números
   def raw_cpf
     self.cpf.gsub('.','').gsub('-','')
   end

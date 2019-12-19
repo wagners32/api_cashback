@@ -3,5 +3,7 @@ Rails.application.routes.draw do
   resources :purchases, only: %i[index edit create update destroy]
   
   post '/auth/login', to: 'authentication#login'
+  get '/cashback', to: 'purchases#cashback'
   get '/*a', to: 'application#not_found'
+ 
 end

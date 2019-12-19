@@ -1,15 +1,18 @@
 class Purchase < ApplicationRecord
+  # relacionamento com o Revendedor
   belongs_to :user
 
-  before_validation :set_value, on: [:create]
-  before_validation :set_status, on: [:create, :update]
-  
+  # virtual fields
   attr_accessor :cpf, :original_value
 
-  # status da compra
+  # emun status da compra
   enum status: [ :in_validation, :approved ]
 
   # validações e campos obrigatórios
+  before_validation :set_value, on: [:create]
+  before_validation :set_status, on: [:create, :update]
+  before_save :calc_cashback, on: [:create, :update]
+
   validates :cpf, presence: true
   validates :code, presence: true
   validates :value, presence: true, numericality: { greater_than: 0, less_than: 1000000 }
@@ -46,38 +49,55 @@ class Purchase < ApplicationRecord
     self.cpf.gsub('.','').gsub('-','')
   end
 
+  # tratamento para atribuição do valor da compra
   def set_value
     self.value = self.original_value.to_s.gsub(',','.') if !self.value.nil?
   end
 
+  # status em portugês
   def status_desc
     Purchase.human_enum_name(:status, self.status)
   end
 
+  # formatação do valor
   def value_formated
     ActionController::Base.helpers.number_to_currency(self.value, :unit => "R$ ", :separator => ",", :delimiter => ".")
   end
+
+  # formatação do cashback
+  def cashback_formated
+    ActionController::Base.helpers.number_to_currency(self.cashback, :unit => "R$ ", :separator => ",", :delimiter => ".")
+  end
   
+  # metodo para formatação da consulta de compras
   def as_json options={}
     {
       codigo: code,
       valor: value_formated, 
-      data: purchase_date,
-      cash_back_percent: cashback_percentual,
-      cash_back_value: cashback,
+      data: purchase_date.strftime("%d/%m/%Y"),
+      cash_back_percent: cashback_percentual.to_s,
+      cash_back_value: cashback_formated,
       status: self.status_desc
     }
   end
- 
+
+  # calcula cashback da compra
+  def calc_cashback
+    @percent = CashBackRange.where('? between min_value and max_value', self.value).first
+    self.cashback_percentual = @percent.percentage
+    self.cashback = ((self.value.to_f/100)*@percent.percentage).round(2)
+  end
+
   private
+
+    # status aprovado não permite exclusão
     def cannot_delete_approved
       errors.add(:base, 'Status da compra não permite exclusão') if self.status != 0
     end
 
-    # valida se o usuário é o dono do CPF da compra
+    # valida se o CPF da compra é o mesmo do usuário
     def check_cpf_owner?
       if self.raw_cpf != self.user.raw_cpf
-        # CPF da compra diferente do CPF do usuário logado
         errors.add(:base, 'CPF inválido. CPF não corresponde ao revendedor logado')
       end
       if errors.present?
@@ -86,6 +106,4 @@ class Purchase < ApplicationRecord
         true
       end
     end
-
-    
 end

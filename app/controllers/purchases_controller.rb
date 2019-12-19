@@ -1,11 +1,25 @@
 class PurchasesController < ApplicationController
+  include PurchasesHelper
+
   before_action :authorize_request
-  before_action :find_purchase, except: %i[create index]
+  before_action :find_purchase, except: %i[create index cashback]
   before_action :require_authorization!, only: [:show, :update, :destroy]
+  
+  # GET /cashback
+  def cashback
+    response = get_cashback_total
+
+    if response.code == 200
+      render json: response.body
+    else
+      render json: { errors: ['Erro ao consultar o seu saldo de cashback'] },
+             status: :unprocessable_entity
+    end
+  end
 
   # GET /purchases
   def index
-    @purchases = Purchase.where(user: @current_user).all.order(purchase_date: :desc)
+    @purchases = Purchase.where(user: @current_user).all.order(id: :desc)
 
     if @purchases.nil?
       render json: { errors: @purchase.errors.full_messages },
