@@ -7,7 +7,8 @@ class PurchasesController < ApplicationController
   
   # GET /cashback
   def cashback
-    response = get_cashback_total
+    puts "@current_user.raw_cpf #{@current_user.raw_cpf}"
+    response = get_cashback_total(@current_user.raw_cpf)
 
     if response.code == 200
       render json: response.body
