@@ -1,11 +1,19 @@
-# README
+# API CashBack
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rotas
 
-Things you may want to cover:
+- Criação de usuários
 
-* Ruby version
+* POST /users
+  {
+	"data": {
+		"name": "Revendedor Sobrenome",
+		"username": "revendedor1",
+		"cpf": "153.509.460-56",
+		"email": "teste@gmail.com",
+		"password": "senha123"
+	}
+  }
 
 * System dependencies
 
