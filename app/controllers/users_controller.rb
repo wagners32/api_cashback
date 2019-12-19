@@ -1,12 +1,10 @@
 class UsersController < ApplicationController
   before_action :authorize_request, except: :create
-  before_action :find_user, except: %i[create index]
-  before_action :require_authorization!, only: [:show, :update, :destroy]
+  before_action :find_user, except: %i[create]
+  before_action :require_authorization!, only: [:show, :destroy]
  
   # GET /users/{username}
   def show
-    puts "@current_user #{@current_user.inspect}"
-
     render json: @user, status: :ok
   end
 
@@ -19,19 +17,6 @@ class UsersController < ApplicationController
       render json: { errors: @user.errors.full_messages },
              status: :unprocessable_entity
     end
-  end
-
-  # PUT /users/{username}
-  def update
-    unless @user.update(user_params)
-      render json: { errors: @user.errors.full_messages },
-             status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /users/{username}
-  def destroy
-    @user.destroy
   end
 
   private
