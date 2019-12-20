@@ -4,6 +4,7 @@ en:
       not_a_number: "não é válido"
       taken: "já está sendo utilizado"
       blank: "deve ser informado"
+      greater_than: deve ser maior que %{count}
 
   activerecord:
     models:
