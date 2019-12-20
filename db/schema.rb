@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_18_224635) do
+ActiveRecord::Schema.define(version: 2019_12_20_002019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,15 +25,21 @@ ActiveRecord::Schema.define(version: 2019_12_18_224635) do
 
   create_table "purchases", force: :cascade do |t|
     t.bigint "user_id"
-    t.string "code"
-    t.decimal "value", precision: 8, scale: 2
-    t.date "purchase_date"
+    t.string "code", null: false
+    t.decimal "value", precision: 8, scale: 2, null: false
+    t.date "purchase_date", null: false
     t.decimal "cashback", precision: 8, scale: 2
     t.float "cashback_percentual"
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_purchases_on_user_id"
+  end
+
+  create_table "user_approveds", force: :cascade do |t|
+    t.string "cpf"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

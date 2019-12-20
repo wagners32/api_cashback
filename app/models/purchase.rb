@@ -29,7 +29,8 @@ class Purchase < ApplicationRecord
   # define status da compra antes da inclusão
   def set_status
     if !self.cpf.blank? 
-      if self.cpf == '153.509.460-56' || self.cpf.gsub('.','').gsub('-','') == '15350946056'
+      @user_approved = UserApproved.where(cpf: self.raw_cpf).first
+      if !@user_approved.nil?
         self.status = 'approved'
       else
         self.status = 'in_validation'
@@ -39,14 +40,15 @@ class Purchase < ApplicationRecord
 
   # valida se status permite alteração da compra
   def allow_update
-    #if self.status != 0
-    #  errors.add(:status, :not_valid, message: "atual da compra não permite alteração")
-    #end
+    if self.status != 'in_validation'
+      errors.add(:status, :not_valid, message: "atual da compra não permite alteração")
+      throw(:abort) if errors.present?
+    end
   end
   
   # CPF somente números
   def raw_cpf
-    self.cpf.gsub('.','').gsub('-','')
+    self.cpf.gsub('.','').gsub('-','') if !self.cpf.nil?
   end
 
   # tratamento para atribuição do valor da compra
@@ -73,9 +75,9 @@ class Purchase < ApplicationRecord
   def as_json options={}
     {
       id: id,
-      codigo: code,
-      valor: value_formated, 
-      data: purchase_date.strftime("%d/%m/%Y"),
+      code: code,
+      value: value_formated, 
+      date: purchase_date.strftime("%d/%m/%Y"),
       cash_back_percent: cashback_percentual.to_s,
       cash_back_value: cashback_formated,
       status: self.status_desc
