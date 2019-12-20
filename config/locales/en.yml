@@ -5,6 +5,7 @@ en:
       taken: "já está sendo utilizado"
       blank: "deve ser informado"
       greater_than: deve ser maior que %{count}
+      less_than: deve ser menor que %{count}
 
   activerecord:
     models:
