@@ -17,7 +17,7 @@ Instalar `ruby 2.6.2` ou versão superior à `ruby 2.5`
 
 Instalar `rails ~> 5.2.3` 
 
-Criar o banco de dados `rake db:create` 
+Criar o banco de dados `rake db:create`, postgresql, dados de acesso em config/database.yml 
 
 Rodar as migrations `rake db:migrate` 
 
