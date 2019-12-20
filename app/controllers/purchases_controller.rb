@@ -7,7 +7,6 @@ class PurchasesController < ApplicationController
   
   # GET /cashback
   def cashback
-    puts "@current_user.raw_cpf #{@current_user.raw_cpf}"
     response = get_cashback_total(@current_user.raw_cpf)
 
     if response.code == 200
@@ -48,7 +47,6 @@ class PurchasesController < ApplicationController
   def update
     @purchase.original_value = purchase_params[:value]
    
-    puts "#{purchase_params}"
     if @purchase.update(purchase_params)
       render json: @purchase.as_json
     else
