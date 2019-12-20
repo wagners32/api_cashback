@@ -13,7 +13,7 @@ class Purchase < ApplicationRecord
   before_validation :set_status, on: [:create]
   before_save :calc_cashback, on: [:create, :update]
 
-  validates :cpf, presence: true
+  validates :cpf, presence: true, on: :create
   validates :purchase_date, presence: true
   validates :code, presence: true
   validates :value, presence: true, numericality: { greater_than: 0, less_than: 1000000 }
