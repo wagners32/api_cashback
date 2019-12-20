@@ -22,8 +22,9 @@ class User < ApplicationRecord
     self.cpf.gsub('.','').gsub('-','') if !self.cpf.nil?
   end
 
+  # Ajusta CPF antes de salvar
   def clean_cpf
-     self.cpf = self.cpf.gsub('.','').gsub('-','') if !self.cpf.nil?
+     self.cpf = self.raw_cpf if !self.cpf.nil?
   end
 
   def validar_cpf
