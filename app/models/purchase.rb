@@ -10,7 +10,7 @@ class Purchase < ApplicationRecord
 
   # validações e campos obrigatórios
   before_validation :set_value, on: [:create, :update]
-  before_validation :set_status, on: [:create, :update]
+  before_validation :set_status, on: [:create]
   before_save :calc_cashback, on: [:create, :update]
 
   validates :cpf, presence: true
