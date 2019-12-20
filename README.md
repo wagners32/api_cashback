@@ -22,3 +22,5 @@ Criar o banco de dados `rake db:create`
 Rodar as migrations `rake db:migrate` 
 
 Executar a seed: `rake db:seed`  para carregar a tabela de faixas de cashback
+
+Subir o server: `rails s`
